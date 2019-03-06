@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: auth-service
+
+  cloud:
+    config:
+      name: ${spring.application.name},${spring.modules.with-feign},druid,auth-db,authclient-redis-3
+      #bootstrapn
+logging:
+  path: ${user.home}/logs/${spring.application.name}

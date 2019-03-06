@@ -1,0 +1,66 @@
+server:
+  port: 9400
+
+spring:
+  redis:
+    host: localhost
+    password:
+    database: 0
+    timeout: 15000 # 连接超时时间（毫秒）
+    jedis:
+      pool:
+        maxActive: 10 # 连接池最大连接数
+        maxIdle: 2 # 连接池中的最大空闲连接
+        maxWait: -1 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        minIdle:  2 # 连接池中的最小空闲连接
+
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/auth?useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password:
+      # 自定义配置
+      initialSize: 2  # 初始化大小
+      minIdle: 1   # 最小连接
+      maxActive: 5 # 最大连接
+      druidServletSettings:
+        allow: 127.0.0.1
+        deny:
+        loginUsername: admin
+        loginPassword: Passw0rd
+        resetEnable: true
+      druidFilterSettings:
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+      maxWait: 60000   # 配置获取连接等待超时的时间
+      timeBetweenEvictionRunsMillis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      minEvictableIdleTimeMillis: 300000 # 配置一个连接在池中最小生存的时间，单位是毫秒
+      validationQuery: SELECT 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true # 打开PSCache，并且指定每个连接上PSCache的大小
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat #,wall（添加wall代码里不能直接拼接sql，druid有sql注入校验） # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000 # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      useGlobalDataSourceStat: true # 合并多个DruidDataSource的监控数据
+
+redis:
+  clients:
+    auth:
+      host: localhost
+      database: 2
+
+auth:
+  kickout:
+    kickoutPolicyClassMap:
+      robot: com.springcloud.service.auth.security.kick.impl.ClientKickoutPolicy
+
+mapper:
+  useSimpleType: false
+  enumAsSimpleType: true
+---
+spring:
+  profiles: test
+  redis:
+    host: 10.0.13.199
